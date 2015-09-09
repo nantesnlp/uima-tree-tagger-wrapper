@@ -30,10 +30,10 @@ if(hasProperty("signing.keyId")) {
 }
 
 dependencies {
-  compile 'org.apache.uima:uimaj-core:2.6.+'
-  compile "org.apache.uima:uimafit-core:2.1.+"
-  compile 'org.annolab.tt4j:org.annolab.tt4j:1.1.+' // TT4J
-  compile 'fr.univ-nantes.julestar:uima-profiler:1.+'
+  compile 'org.apache.uima:uimaj-core:2.6.0'
+  compile "org.apache.uima:uimafit-core:2.1.0"
+  compile 'org.annolab.tt4j:org.annolab.tt4j:1.1.1' // TT4J
+  compile 'fr.univ-nantes.julestar:uima-profiler:1.0'
 }
 
 repositories {
@@ -72,7 +72,7 @@ if(hasProperty("ossrhUsername")) {
 			  packaging 'jar'
 			  // optionally artifactId can be defined here
 			  description ' A UIMA Analysis Engine wrapper for TreeTagger based on tt4j'
-			  //url 'http://www.example.com/example-application'
+			  url 'https://github.com/JuleStar/uima-tree-tagger-wrapper'
 	
 			  scm {
 				  connection 'scm:git:git@github.com:julestar/uima-tree-tagger-wrapper.git'
