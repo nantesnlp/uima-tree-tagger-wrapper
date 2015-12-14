@@ -7,7 +7,8 @@ bin/
 .mtj.tmp/
 
 # Package Files #
-*.jar
+
+#*.jar
 *.war
 *.ear
 
@@ -24,4 +25,13 @@ artifacts/
 .classpath
 .project
 .settings/
+
+#Idea
+/gradle
+/uima-tree-tagger-wrapper.iml
+/gradlew.bat
+/gradlew
+/.gradle
+/.idea
+
 

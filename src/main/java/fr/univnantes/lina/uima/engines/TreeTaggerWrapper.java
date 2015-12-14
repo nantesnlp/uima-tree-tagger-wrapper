@@ -52,7 +52,11 @@ public class TreeTaggerWrapper extends JCasAnnotator_ImplBase {
 	public static final String PARAM_UPDATE_ANNOTATION_FEATURES = "UpdateAnnotationFeatures";
 	@ConfigurationParameter(name = PARAM_UPDATE_ANNOTATION_FEATURES, mandatory=true)
 	private boolean updateAnnotationFeatures;
-	
+
+	public static final String PARAM_TT_CMD_ARGUMENTS = "ParamTreeTaggerCmdArguments";
+	@ConfigurationParameter(name = PARAM_TT_CMD_ARGUMENTS, mandatory = true)
+	private String[] paramTreeTaggerCmdArguments;
+
 	// Resources
 	@ExternalResource(key = TreeTaggerParameter.KEY_TT_PARAMETER)
 	private TreeTaggerParameter ttParameter;
@@ -107,24 +111,24 @@ public class TreeTaggerWrapper extends JCasAnnotator_ImplBase {
 			this.lemmaFeature = (String) context.getConfigParameterValue(PARAM_LEMMA_FEATURE);
 			this.ttParameterFile = (String) context.getConfigParameterValue(PARAM_TT_PARAMETER_FILE);
 			this.annotationType = (String) context.getConfigParameterValue(PARAM_ANNOTATION_TYPE);
+			this.paramTreeTaggerCmdArguments = (String[]) context.getConfigParameterValue(PARAM_TT_CMD_ARGUMENTS);
 
 			// read resources from context
 			this.ttParameter = (TreeTaggerParameter) context.getResourceObject(TreeTaggerParameter.KEY_TT_PARAMETER);
 
-			
 			System.setProperty("treetagger.home", ttHomeDirectory);
-			
-			
+
 			ttParameter.override(ttParameterFile);
 			
 			// init wrapper
 			this.handler = new Handler();
-			this.handler.enableUpdate(updateAnnotationFeatures);
 			this.adapter = new Adapter();
 			this.wrapper = new org.annolab.tt4j.TreeTaggerWrapper<Annotation>();
+			this.wrapper.setArguments(paramTreeTaggerCmdArguments);
+			this.handler.enableUpdate(updateAnnotationFeatures);
 			this.wrapper.setHandler(this.handler);
 			this.wrapper.setAdapter(this.adapter);
-			this.wrapper.setModel(this.ttParameter.getModel());				
+			this.wrapper.setModel(this.ttParameter.getModel());
 
 			
 			String[] path = lemmaFeature.split(":");
