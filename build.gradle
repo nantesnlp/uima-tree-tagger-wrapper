@@ -8,6 +8,9 @@ group = 'fr.univ-nantes.julestar'
 archivesBaseName = 'uima-tree-tagger-wrapper'
 version = '1.0'
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 task javadocJar(type: Jar) {
 	classifier = 'javadoc'
 	from javadoc
@@ -29,16 +32,15 @@ if(hasProperty("signing.keyId")) {
 	}
 }
 
-dependencies {
-  compile 'org.apache.uima:uimaj-core:2.6.0'
-  compile "org.apache.uima:uimafit-core:2.1.0"
-  compile 'org.annolab.tt4j:org.annolab.tt4j:1.1.1' // TT4J
-  compile 'fr.univ-nantes.julestar:uima-profiler:1.0'
-}
-
 repositories {
 	mavenLocal()
 	mavenCentral()
+}
+dependencies {
+	compile 'org.apache.uima:uimaj-core:2.6.0'
+	compile "org.apache.uima:uimafit-core:2.1.0"
+	compile 'org.annolab.tt4j:org.annolab.tt4j:1.1.1' // TT4J
+	compile 'fr.univ-nantes.julestar:uima-profiler:1.0'
 }
 
 publishing {
