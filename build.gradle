@@ -35,16 +35,12 @@ if(hasProperty("signing.keyId")) {
 repositories {
 	mavenLocal()
 	mavenCentral()
-	flatDir {
-		dirs 'libs'
-	}
 }
 dependencies {
 	compile 'org.apache.uima:uimaj-core:2.6.0'
 	compile "org.apache.uima:uimafit-core:2.1.0"
-	//compile 'org.annolab.tt4j:org.annolab.tt4j:1.1.1' // TT4J
+	compile 'org.annolab.tt4j:org.annolab.tt4j:1.1.1' // TT4J
 	compile 'fr.univ-nantes.julestar:uima-profiler:1.0'
-	compile name: 'org.annolab.tt4j'
 }
 
 publishing {
