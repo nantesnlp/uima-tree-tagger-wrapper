@@ -6,7 +6,7 @@ apply plugin: 'maven-publish'
 
 group = 'fr.univ-nantes.julestar'
 archivesBaseName = 'uima-tree-tagger-wrapper'
-version = '1.0'
+version = '1.1'
 
 task javadocJar(type: Jar) {
 	classifier = 'javadoc'
@@ -33,7 +33,6 @@ dependencies {
   compile 'org.apache.uima:uimaj-core:2.6.0'
   compile "org.apache.uima:uimafit-core:2.1.0"
   compile 'org.annolab.tt4j:org.annolab.tt4j:1.1.1' // TT4J
-  compile 'fr.univ-nantes.julestar:uima-profiler:1.0'
 }
 
 repositories {

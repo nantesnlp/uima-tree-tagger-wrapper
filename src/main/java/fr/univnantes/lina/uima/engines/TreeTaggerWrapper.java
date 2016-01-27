@@ -7,7 +7,6 @@ import org.annolab.tt4j.TokenAdapter;
 import org.annolab.tt4j.TokenHandler;
 import org.annolab.tt4j.TreeTaggerException;
 import org.apache.uima.UimaContext;
-import org.apache.uima.analysis_component.JCasAnnotator_ImplBase;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.cas.CAS;
 import org.apache.uima.cas.FSIterator;
@@ -15,6 +14,7 @@ import org.apache.uima.cas.Feature;
 import org.apache.uima.cas.Type;
 import org.apache.uima.cas.text.AnnotationFS;
 import org.apache.uima.cas.text.AnnotationIndex;
+import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.descriptor.ExternalResource;
 import org.apache.uima.jcas.JCas;
@@ -23,7 +23,6 @@ import org.apache.uima.resource.ResourceAccessException;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.util.Level;
 
-import fr.univnantes.lina.UIMAProfiler;
 import fr.univnantes.lina.uima.models.TreeTaggerParameter;
 
 public class TreeTaggerWrapper extends JCasAnnotator_ImplBase {
@@ -141,7 +140,6 @@ public class TreeTaggerWrapper extends JCasAnnotator_ImplBase {
 	
 	@Override
 	public void process(JCas cas) throws AnalysisEngineProcessException {
-		UIMAProfiler.getProfiler("AnalysisEngine").start(this, "process");
 		try {
 			this.wrapper.setModel(this.ttParameter.getModel());
 			Type type = this.getAnnotationType(cas);
@@ -167,7 +165,6 @@ public class TreeTaggerWrapper extends JCasAnnotator_ImplBase {
 		} catch (Exception e) {
 			throw new AnalysisEngineProcessException(e);
 		}
-		UIMAProfiler.getProfiler("AnalysisEngine").stop(this, "process");
 	}
 	
 	private class Handler implements TokenHandler<Annotation> {	
