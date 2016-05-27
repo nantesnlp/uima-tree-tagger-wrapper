@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
+	<name>test-type-system</name>
+	<description>Type System for test purpose on TreeTaggerWrapper
+	</description>
+	<version>1.0</version>
+	<vendor>University of Nantes (LINA, UMR CNRS 6241)</vendor>
+	<imports />
+	<types>
+		<typeDescription>
+			<name>fr.univnantes.ttw.types.WordAnnotation</name>
+			<description />
+			<supertypeName>uima.tcas.Annotation</supertypeName>
+			<features>
+				<featureDescription>
+					<name>tag</name>
+					<description />
+					<rangeTypeName>uima.cas.String</rangeTypeName>
+				</featureDescription>
+				<featureDescription>
+					<name>lemma</name>
+					<description />
+					<rangeTypeName>uima.cas.String</rangeTypeName>
+				</featureDescription>
+			</features>
+		</typeDescription>
+	</types>
+</typeSystemDescription>

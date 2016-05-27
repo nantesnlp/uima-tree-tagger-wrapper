@@ -1,0 +1,1 @@
+This is a text with a formula : a < b , and some more description after the formula .

@@ -6,7 +6,7 @@ apply plugin: 'maven-publish'
 
 group = 'fr.univ-nantes.julestar'
 archivesBaseName = 'uima-tree-tagger-wrapper'
-version = '1.1'
+version = '1.2'
 
 task javadocJar(type: Jar) {
 	classifier = 'javadoc'
@@ -30,6 +30,12 @@ if(hasProperty("signing.keyId")) {
 }
 
 dependencies {
+	
+	testCompile "junit:junit:4.12"
+	testCompile "eu.codearte.catch-exception:catch-exception:1.4.4"
+	testCompile "org.assertj:assertj-core:2.0.0"
+	testCompile "org.mockito:mockito-all:1.10.19"
+	
   compile 'org.apache.uima:uimaj-core:2.6.0'
   compile "org.apache.uima:uimafit-core:2.1.0"
   compile 'org.annolab.tt4j:org.annolab.tt4j:1.1.1' // TT4J
