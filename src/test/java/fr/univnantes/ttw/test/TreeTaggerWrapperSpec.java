@@ -22,6 +22,8 @@ import org.apache.uima.fit.factory.JCasFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
+import org.apache.uima.resource.ResourceInitializationException;
+import org.apache.uima.util.InvalidXMLException;
 import org.assertj.core.api.iterable.Extractor;
 import org.assertj.core.groups.Tuple;
 import org.junit.Before;
@@ -39,12 +41,15 @@ public class TreeTaggerWrapperSpec {
 	public static final String TEXT_FILE1 = "/fr/univnantes/ttw/test/fixtures/text1.txt";
 	public static final String TEXT_FILE2 = "/fr/univnantes/ttw/test/fixtures/text2.txt";
 	public static final String TEXT_FILE3 = "/fr/univnantes/ttw/test/fixtures/text3.txt";
+	public static final String TEXT_FILE4 = "/fr/univnantes/ttw/test/fixtures/text4.txt";
 
-	AnalysisEngineDescription ttwAE;
+	AnalysisEngineDescription ttwAESWWithSGML;
+	AnalysisEngineDescription ttwAESWNoSGML;
 
 	JCas cas1;
 	JCas cas2;
 	JCas cas3;
+	JCas cas4;
 
 	@Before
 	public void setUp() throws Exception {
@@ -57,14 +62,8 @@ public class TreeTaggerWrapperSpec {
 		if (ttHome == null)
 			fail(String.format("Property %s not found in file %s.", P_TREE_TAGGER_HOME, PROPERTY_FILE_NAME));
 
-		ttwAE = AnalysisEngineFactory.createEngineDescription(TreeTaggerWrapper.class,
-				TreeTaggerWrapper.PARAM_ANNOTATION_TYPE, WORD_ANNOTATION_TYPE,
-				TreeTaggerWrapper.PARAM_TAG_FEATURE, "tag", TreeTaggerWrapper.PARAM_LEMMA_FEATURE, "lemma",
-				TreeTaggerWrapper.PARAM_UPDATE_ANNOTATION_FEATURES, true, TreeTaggerWrapper.PARAM_TT_HOME_DIRECTORY,
-				ttHome);
-
-		ExternalResourceFactory.createDependencyAndBind(ttwAE, TreeTaggerParameter.KEY_TT_PARAMETER,
-				TreeTaggerParameter.class, TREE_TAGGER_CONFIG_FILE_URL);
+		ttwAESWWithSGML = initAE(ttHome, "-quiet -no-unknown -sgml -token -lemma");
+		ttwAESWNoSGML = initAE(ttHome, "-quiet -no-unknown -token -lemma");
 
 		cas1 = JCasFactory.createJCas();
 		fillCas(cas1, TEXT_FILE1);
@@ -72,6 +71,21 @@ public class TreeTaggerWrapperSpec {
 		fillCas(cas2, TEXT_FILE2);
 		cas3 = JCasFactory.createJCas();
 		fillCas(cas3, TEXT_FILE3);
+		cas4 = JCasFactory.createJCas();
+		fillCas(cas4, TEXT_FILE4);
+	}
+
+	private AnalysisEngineDescription initAE(String ttHome, String argumenAsString) throws ResourceInitializationException, InvalidXMLException {
+		AnalysisEngineDescription ae = AnalysisEngineFactory.createEngineDescription(TreeTaggerWrapper.class,
+				TreeTaggerWrapper.PARAM_ANNOTATION_TYPE, WORD_ANNOTATION_TYPE,
+				TreeTaggerWrapper.PARAM_TT_ARGUMENTS, argumenAsString,
+				TreeTaggerWrapper.PARAM_TAG_FEATURE, "tag", TreeTaggerWrapper.PARAM_LEMMA_FEATURE, "lemma",
+				TreeTaggerWrapper.PARAM_UPDATE_ANNOTATION_FEATURES, true, TreeTaggerWrapper.PARAM_TT_HOME_DIRECTORY,
+				ttHome);
+
+		ExternalResourceFactory.createDependencyAndBind(ae, TreeTaggerParameter.KEY_TT_PARAMETER,
+				TreeTaggerParameter.class, TREE_TAGGER_CONFIG_FILE_URL);
+		return ae;
 	}
 
 	private void fillCas(JCas cas, String textFile) throws IOException, URISyntaxException {
@@ -124,8 +138,8 @@ public class TreeTaggerWrapperSpec {
 	
 	
 	@Test
-	public void testCas1NoSgml() throws Exception {
-		SimplePipeline.runPipeline(cas1, ttwAE);
+	public void testCas1WithSgml() throws Exception {
+		SimplePipeline.runPipeline(cas1, ttwAESWWithSGML);
 		assertThat(wordAnnotations(cas1)).extracting(WORD_ANNOTATION_TUPLE_EXTRACTOR).containsExactly(
 				tuple(0,4,"this", "DT"),
 				tuple(5,7,"be", "VBZ"),
@@ -145,8 +159,8 @@ public class TreeTaggerWrapperSpec {
 	 * 
 	 */
 	@Test
-	public void testCas2NoSgml() throws Exception {
-		SimplePipeline.runPipeline(cas2, ttwAE);
+	public void testCas2WithSgml() throws Exception {
+		SimplePipeline.runPipeline(cas2, ttwAESWWithSGML);
 		assertThat(wordAnnotations(cas2)).extracting(WORD_ANNOTATION_TUPLE_EXTRACTOR).containsExactly(
 				tuple(0,4,"this", "DT"),
 				tuple(5,7,"be", "VBZ"),
@@ -172,8 +186,8 @@ public class TreeTaggerWrapperSpec {
 	}
 	
 	@Test
-	public void testCas3NoSgml() throws Exception {
-		SimplePipeline.runPipeline(cas3, ttwAE);
+	public void testCas3WithSgml() throws Exception {
+		SimplePipeline.runPipeline(cas3, ttwAESWWithSGML);
 		assertThat(wordAnnotations(cas3)).extracting(WORD_ANNOTATION_TUPLE_EXTRACTOR).containsExactly(
 				tuple(0,4,"this", "DT"),
 				tuple(5,7,"be", "VBZ"),
@@ -205,4 +219,107 @@ public class TreeTaggerWrapperSpec {
 		);
 	}
 
+
+	@Test
+	public void testCas4WithSgml() throws Exception {
+		SimplePipeline.runPipeline(cas4, ttwAESWWithSGML);
+		assertThat(wordAnnotations(cas4)).extracting(WORD_ANNOTATION_TUPLE_EXTRACTOR).containsExactly(
+				tuple(0,4,"this", "DT"),
+				tuple(5,7,"be", "VBZ"),
+				tuple(8,9,"a", "DT"),
+				tuple(10,14,"text", "NN"),
+				tuple(15,19,"with", "IN"),
+				tuple(20,21,"a", "DT"),
+				tuple(22,29,"formula", "NN"),
+				tuple(30,31,":", ":"),
+				tuple(32,34,"aa", "NN"),
+				tuple(35,37,"<b", "NN"),
+				tuple(38,39,",", ","),
+				tuple(40,47,"another", "DT"),
+				tuple(48,56,"equation", "NN"),
+				tuple(57,58,",", ","),
+				tuple(59,60,"b", "LS"),
+				tuple(61,62,">", "SYM"),
+				tuple(63,64,"a", "DT"),
+				tuple(65,66,",", ","),
+				tuple(67,70,"and", "CC"),
+				tuple(71,75,"some", "DT"),
+				tuple(76,80,"more", "JJR"),
+				tuple(81,92,"description", "NN"),
+				tuple(93,98,"after", "IN"),
+				tuple(99,102,"the", "DT"),
+				tuple(103,110,"formula", "NN"),
+				tuple(111,112,".", "SENT")
+		);
+	}
+
+
+	@Test
+	public void testCas4NoSgml() throws Exception {
+		SimplePipeline.runPipeline(cas4, ttwAESWNoSGML);
+		assertThat(wordAnnotations(cas4)).extracting(WORD_ANNOTATION_TUPLE_EXTRACTOR).containsExactly(
+				tuple(0,4,"this", "DT"),
+				tuple(5,7,"be", "VBZ"),
+				tuple(8,9,"a", "DT"),
+				tuple(10,14,"text", "NN"),
+				tuple(15,19,"with", "IN"),
+				tuple(20,21,"a", "DT"),
+				tuple(22,29,"formula", "NN"),
+				tuple(30,31,":", ":"),
+				tuple(32,34,"aa", "NN"),
+				tuple(35,37,"<b", "NN"),
+				tuple(38,39,",", ","),
+				tuple(40,47,"another", "DT"),
+				tuple(48,56,"equation", "NN"),
+				tuple(57,58,",", ","),
+				tuple(59,60,"b", "LS"),
+				tuple(61,62,">", "SYM"),
+				tuple(63,64,"a", "DT"),
+				tuple(65,66,",", ","),
+				tuple(67,70,"and", "CC"),
+				tuple(71,75,"some", "DT"),
+				tuple(76,80,"more", "JJR"),
+				tuple(81,92,"description", "NN"),
+				tuple(93,98,"after", "IN"),
+				tuple(99,102,"the", "DT"),
+				tuple(103,110,"formula", "NN"),
+				tuple(111,112,".", "SENT")
+		);
+	}
+
+	
+	
+	@Test
+	public void testCas3NoSgml() throws Exception {
+		SimplePipeline.runPipeline(cas3, ttwAESWNoSGML);
+		assertThat(wordAnnotations(cas3)).extracting(WORD_ANNOTATION_TUPLE_EXTRACTOR).containsExactly(
+				tuple(0,4,"this", "DT"),
+				tuple(5,7,"be", "VBZ"),
+				tuple(8,9,"a", "DT"),
+				tuple(10,14,"text", "NN"),
+				tuple(15,19,"with", "IN"),
+				tuple(20,21,"a", "DT"),
+				tuple(22,29,"formula", "NN"),
+				tuple(30,31,":", ":"),
+				tuple(32,33,"a", "DT"),
+				tuple(34,35,"<", "SYM"),
+				tuple(36,37,"b", "NN"),
+				tuple(38,39,",", ","),
+				tuple(40,47,"another", "DT"),
+				tuple(48,56,"equation", "NN"),
+				tuple(57,58,",", ","),
+				tuple(59,60,"b", "LS"),
+				tuple(61,62,">", "SYM"),
+				tuple(63,64,"a", "DT"),
+				tuple(65,66,",", ","),
+				tuple(67,70,"and", "CC"),
+				tuple(71,75,"some", "DT"),
+				tuple(76,80,"more", "JJR"),
+				tuple(81,92,"description", "NN"),
+				tuple(93,98,"after", "IN"),
+				tuple(99,102,"the", "DT"),
+				tuple(103,110,"formula", "NN"),
+				tuple(111,112,".", "SENT")
+		);
+	}
 }

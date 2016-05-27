@@ -2,6 +2,7 @@ package fr.univnantes.lina.uima.engines;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.annolab.tt4j.TokenAdapter;
 import org.annolab.tt4j.TokenHandler;
@@ -40,6 +41,11 @@ public class TreeTaggerWrapper extends JCasAnnotator_ImplBase {
 	@ConfigurationParameter(name = PARAM_ANNOTATION_TYPE, mandatory=true)
 	private String annotationType;
 	
+	public static final String PARAM_TT_ARGUMENTS = "TreeTaggerArguments";
+	@ConfigurationParameter(name = PARAM_TT_ARGUMENTS, mandatory=false, defaultValue="-quiet -no-unknown -sgml -token -lemma")
+	private String ttArgumentsAsString;
+	private String[] ttArguments;
+
 	public static final String PARAM_TAG_FEATURE = "TagFeature";
 	@ConfigurationParameter(name = PARAM_TAG_FEATURE, mandatory=true)
 	private String tagFeature;
@@ -56,6 +62,7 @@ public class TreeTaggerWrapper extends JCasAnnotator_ImplBase {
 	@ExternalResource(key = TreeTaggerParameter.KEY_TT_PARAMETER)
 	private TreeTaggerParameter ttParameter;
 
+	
 	
 	private String lemmaType;
 	private String tagType;
@@ -113,7 +120,20 @@ public class TreeTaggerWrapper extends JCasAnnotator_ImplBase {
 			
 			System.setProperty("treetagger.home", ttHomeDirectory);
 			
-			
+			/*
+			 * Parse TreeTagger arguments
+			 */
+			StringTokenizer st = new StringTokenizer(ttArgumentsAsString, " ");
+			ttArguments = new String[st.countTokens()];
+			int index = 0;
+			while (st.hasMoreElements()) {
+				ttArguments[index] = st.nextToken();
+				index++;
+			}
+					
+			/*
+			 * Load parameter file
+			 */
 			ttParameter.override(ttParameterFile);
 			
 			// init wrapper
