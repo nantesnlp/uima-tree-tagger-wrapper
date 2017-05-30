@@ -6,7 +6,7 @@ apply plugin: 'maven-publish'
 
 group = 'fr.univ-nantes.julestar'
 archivesBaseName = 'uima-tree-tagger-wrapper'
-version = '1.2'
+version = '1.3'
 
 task javadocJar(type: Jar) {
 	classifier = 'javadoc'
@@ -36,8 +36,8 @@ dependencies {
 	testCompile "org.assertj:assertj-core:2.0.0"
 	testCompile "org.mockito:mockito-all:1.10.19"
 	
-  compile 'org.apache.uima:uimaj-core:2.6.0'
-  compile "org.apache.uima:uimafit-core:2.1.0"
+  compile 'org.apache.uima:uimaj-core:2.10.0'
+  compile "org.apache.uima:uimafit-core:2.3.0"
   compile 'org.annolab.tt4j:org.annolab.tt4j:1.1.1' // TT4J
 }
 
@@ -58,18 +58,18 @@ publishing {
 	}
 }
 
-if(hasProperty("ossrhUsername")) {
+if(hasProperty("ossrh.username")) {
 	uploadArchives {
 		repositories {
 		  mavenDeployer {
 			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 	
 			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-			  authentication(userName: ossrhUsername, password: ossrhPassword)
+			  authentication(userName: project.getProperty("ossrh.username"), password: project.getProperty("ossrh.password"))
 			}
 	
 			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-			  authentication(userName: ossrhUsername, password: ossrhPassword)
+			  authentication(userName: project.getProperty("ossrh.username"), password: project.getProperty("ossrh.password"))
 			}
 	
 			pom.project {
@@ -94,9 +94,9 @@ if(hasProperty("ossrhUsername")) {
 	
 			  developers {
 				  developer {
-					  id developerId
-					  name developerName
-					  email developerEmail
+					  id getProperty("developer.id")
+					  name getProperty("developer.name")
+					  email getProperty("developer.email")
 				  }
 			  }
 			}
